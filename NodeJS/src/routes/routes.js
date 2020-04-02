@@ -2,8 +2,10 @@ const express = require('express');
 
 const routes = express.Router();
 
-const loginController = require('./login/loginRoutes');
+const loginRoutes = require('./login/loginRoutes');
+const messageRoutes = require('./message/messageRoutes');
 
-routes.use(loginController);
+routes.use(loginRoutes);
+routes.use(messageRoutes);
 
 module.exports = routes;
