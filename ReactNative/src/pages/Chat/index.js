@@ -75,18 +75,17 @@ export default function Chat({ navigation, route }) {
     }
 
     useEffect(() => {
-        const socket = io('http://192.168.0.18:3333');
+        const socket = io('http://192.168.0.18:3333', {
+            query: { id_receive: user.id }
+        });
+        console.log(message.length);
 
-        socket.emit('hello', {
-            message: 'teste'
+        socket.on('message', socketMessage => {
+
+            setMessages([...[socketMessage], ...messages]);
         });
 
-        socket.on('hello', message => {
-
-            console.log('logger socket', message);
-        });
-
-    }, [user]);
+    }, []);
 
     return (
         <Container>

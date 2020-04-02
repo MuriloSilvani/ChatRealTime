@@ -16,7 +16,7 @@ export default function Login({ navigation }) {
     const [login, setLogin] = useState('murilo.silvani');
     const [password, setPassword] = useState('password');
 
-    const [userToTalk, setUserToTalk] = useState('2');
+    const [userToTalk, setUserToTalk] = useState('3');
 
     async function handleLogin() {
         try {

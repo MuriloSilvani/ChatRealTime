@@ -16,6 +16,11 @@ module.exports = {
             .first()
             .select('*');
 
+        const receiveSocket = req.connectedUsers[id_receive];
+        if (receiveSocket) {
+            req.io.to(receiveSocket).emit('message', response);
+        }
+
         return res.json(response);
     },
     async list(req, res) {
