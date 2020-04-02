@@ -1,4 +1,6 @@
-import React from 'react';
+import React, { useState } from 'react';
+
+import api from '../../services/api';
 
 import {
     Container,
@@ -9,9 +11,27 @@ import {
     ButtonText,
 } from '../../components/Components';
 
-import { Text, View } from 'react-native';
-
 export default function Login({ navigation }) {
+
+    const [login, setLogin] = useState('murilo.silvani');
+    const [password, setPassword] = useState('password');
+
+    const [userToTalk, setUserToTalk] = useState('2');
+
+    async function handleLogin() {
+        try {
+
+            const response = await api.post('/login', {
+                login,
+                password
+            });
+            navigation.navigate('chat', { user: response.data, userToTalk });
+        } catch (error) {
+
+            console.log(error);
+        }
+    }
+
     return (
         <Container center>
 
@@ -21,21 +41,29 @@ export default function Login({ navigation }) {
                 <InputTitle>Login *</InputTitle>
                 <Input
                     placeholder='Login'
-                    value='murilo.silvani@gmail.com'
+                    value={login}
+                    onChangeText={setLogin}
                 />
 
                 <InputTitle>Password *</InputTitle>
                 <Input
                     placeholder='Password'
                     secureTextEntry={true}
-                    value='123'
+                    value={password}
+                    onChangeText={setPassword}
                 />
 
-                <Button onPress={
-                    () => {
-                        navigation.navigate('chat')
-                    }
-                }>
+                <InputTitle>ID do usuarios que vai conversar *</InputTitle>
+                <Input
+                    placeholder='ID do usuarios que vai conversar'
+                    keyboardType={'numeric'}
+                    value={userToTalk}
+                    onChangeText={setUserToTalk}
+                />
+
+
+
+                <Button onPress={handleLogin}>
                     <ButtonText> Entrar </ButtonText>
                 </Button>
 

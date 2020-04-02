@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from 'react';
 
+import api from '../../services/api';
+
 import { Text } from 'react-native';
+import { FlatList } from 'react-native-gesture-handler';
 
 import {
     Container,
@@ -17,12 +20,16 @@ import {
     HeaderBoxBack,
 } from '../../components/Components';
 
-import { FlatList } from 'react-native-gesture-handler';
+import io from 'socket.io-client';
 
-export default function Chat({ navigation }) {
+export default function Chat({ navigation, route }) {
 
+    const [user, setUser] = useState(route.params.user);
+
+    const [id_receive, setId_receive] = useState(route.params.userToTalk);
+
+    const [message, setMessage] = useState('');
     const [messages, setMessages] = useState([]);
-    const [contador, setContador] = useState(0);
     const [loadingMessages, setLoadingMessages] = useState(false);
 
     useEffect(() => {
@@ -30,41 +37,63 @@ export default function Chat({ navigation }) {
     }, []);
 
     async function loadMessages() {
+        console.log('carregando mensagens');
         if (!loadingMessages) {
             setLoadingMessages(true);
 
-            // ...
-            let newMessage = [];
-            for (let index = 0; index < 12; index++) {
-                newMessage.push({ id: contador + index, message: `Mensagem ${contador + index}`, type: 'receive' });
-                setContador(contador + index + 1);
+            try {
+                const response = await api.get(`/message/${user.id}/${id_receive}`);
+
+                setMessages(response.data);
+                // setMessages([...messages, ...response.data]);
+            } catch (error) {
+
+                console.log(error);
             }
 
-            setMessages([...messages, ...newMessage]);
             setLoadingMessages(false);
         }
     }
 
     async function sendMessages() {
+        if (message !== '') {
+            setMessage('');
 
-        // ...
-        setContador(contador + 1);
-        let newMessage = { id: contador, message: `Mensagem ${contador}`, type: 'send' };
+            const response = await api.post('/message', {
+                id_send: user.id,
+                id_receive,
+                message
+            });
 
 
-        setMessages([newMessage, ...messages]);
+            setMessages([response.data, ...messages]);
+        }
     }
 
     function handleLogout() {
-        navigation.navigate('login')
+        navigation.navigate('login');
     }
+
+    useEffect(() => {
+        const socket = io('http://192.168.0.18:3333');
+
+        socket.emit('hello', {
+            message: 'teste'
+        });
+
+        socket.on('hello', message => {
+
+            console.log('logger socket', message);
+        });
+
+    }, [user]);
 
     return (
         <Container>
 
             <HeaderBox>
                 <HeaderBoxTitle>
-                    Logado como Murilo
+                    Logado como {user && user.name}
                 </HeaderBoxTitle>
                 <HeaderBoxBack
                     onPress={handleLogout}
@@ -82,14 +111,14 @@ export default function Chat({ navigation }) {
                     )
                 }
                 <FlatList
-                    onEndReached={loadMessages}
+                    // onEndReached={loadMessages}
                     onEndReachedThreshold={0.2}
                     data={messages}
-                    keyExtractor={message => String(message.id ? message.id : 0)}
+                    keyExtractor={message => String(message.id)}
                     inverted
                     renderItem={({ item: message }) => (
                         <BoxChatMessage key={message.id}>
-                            <BoxChatMessageText type={message.type}>
+                            <BoxChatMessageText type={message.id_send === user.id ? 'send' : 'receive'}>
                                 {message.message}
                             </BoxChatMessageText>
                         </BoxChatMessage>
@@ -101,6 +130,8 @@ export default function Chat({ navigation }) {
             <FormChat>
                 <InputChat
                     placeholder='Digite sua mensagem'
+                    value={message}
+                    onChangeText={setMessage}
                 />
                 <InputChatSend
                     onPress={sendMessages}

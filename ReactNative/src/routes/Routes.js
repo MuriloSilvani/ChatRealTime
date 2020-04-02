@@ -5,8 +5,8 @@ import { createStackNavigator } from '@react-navigation/stack';
 const Stack = createStackNavigator();
 const StackNavigator = (
     <Stack.Navigator headerMode='none'>
-        <Stack.Screen name='chat' component={Chat} />
         <Stack.Screen name='login' component={Login} />
+        <Stack.Screen name='chat' component={Chat} />
     </Stack.Navigator>
 );
 
