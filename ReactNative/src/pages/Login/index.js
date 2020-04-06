@@ -9,14 +9,16 @@ import {
     InputTitle,
     Button,
     ButtonText,
-} from '../../components/Components';
+} from '../../styles/Components';
+
+import ThemeSwitch from '../../components/ThemeSwitch';
 
 export default function Login({ navigation }) {
 
-    const [login, setLogin] = useState('murilo.silvani');
-    const [password, setPassword] = useState('password');
+    const [login, setLogin] = useState('');
+    const [password, setPassword] = useState('');
 
-    const [userToTalk, setUserToTalk] = useState('3');
+    const [userToTalk, setUserToTalk] = useState('');
 
     async function handleLogin() {
         try {
@@ -37,6 +39,7 @@ export default function Login({ navigation }) {
 
             <Form>
 
+                <ThemeSwitch />
 
                 <InputTitle>Login *</InputTitle>
                 <Input

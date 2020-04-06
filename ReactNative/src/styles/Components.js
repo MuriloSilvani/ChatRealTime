@@ -1,5 +1,18 @@
 import styled from 'styled-components';
 
+const theme = {
+    mainColor: '#000'
+}
+
+export const GetTheme = styled.Text`
+    padding: 25px;
+    background: ${theme.mainColor}
+`;
+
+
+
+
+
 export const HeaderBox = styled.View`
     flexDirection: row;
     justifyContent: space-between;

@@ -18,7 +18,7 @@ import {
     HeaderBox,
     HeaderBoxTitle,
     HeaderBoxBack,
-} from '../../components/Components';
+} from '../../styles/Components';
 
 import io from 'socket.io-client';
 
